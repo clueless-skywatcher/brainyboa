@@ -1,0 +1,2 @@
+class RegressionError(Exception):
+    pass

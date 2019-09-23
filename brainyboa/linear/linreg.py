@@ -10,6 +10,8 @@ class LinearRegressor:
     def fit(self, data_x, data_y):
         x = np.matrix(data_x)
         y = np.matrix(data_y)
+        if y.shape[0] == 1:
+            y = y.T
         data_size, feature_size = x.shape
         xm = np.c_[np.ones((data_size, 1)), x]
         self.ms = np.linalg.inv(xm.T.dot(xm)).dot(xm.T).dot(y)

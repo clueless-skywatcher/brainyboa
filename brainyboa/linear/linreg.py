@@ -17,7 +17,7 @@ class LinearRegressor:
         self.ms = np.linalg.inv(xm.T.dot(xm)).dot(xm.T).dot(y)
         self.fitted = True
         self.coeffs = np.asarray(self.ms[1:]).reshape(-1)
-        self.intercept = np.asarray(self.ms[0]).reshape(-1)
+        self.intercept = np.asscalar(self.ms[0])
 
     def regress(self, test_x):
         if not self.fitted:

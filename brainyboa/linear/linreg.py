@@ -18,6 +18,9 @@ class LinearRegressor:
         self.fitted = True
         self.coeffs = np.asarray(self.ms[1:]).reshape(-1)
         self.intercept = np.asscalar(self.ms[0])
+        self.x = x
+        self.y = y
+        return self
 
     def regress(self, test_x):
         if not self.fitted:

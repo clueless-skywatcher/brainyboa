@@ -1,6 +1,14 @@
 import numpy as np
 
 def squared_loss(x, y, theta = None):
+    '''
+    Calculates the squared loss of x vs y after applying weights to x
+
+    :param x:
+    :param y:
+    :param theta:
+    
+    '''
     x1 = np.matrix(x)
     y1 = np.matrix(y)
     if theta is None:
@@ -20,4 +28,4 @@ def squared_loss_derivative(x, y, theta = None):
 def mean_square_error(x, y):
     x = np.array(x)
     y = np.array(y)
-    return np.sum(np.square(x - y)) / len(x)
+    return np.average((x - y) ** 2)

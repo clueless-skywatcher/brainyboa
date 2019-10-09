@@ -1,20 +1,25 @@
-from brainyboa.metrics import *
-from brainyboa.linear import LinearRegressor
-from brainyboa.graddesc import GradientDescentRegressor
-from sklearn.datasets import make_regression
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import SGDRegressor
-import matplotlib.pyplot as plt
+from brainyboa.ensembling import CARTClassifier, print_tree
 import numpy as np
 
-if __name__ == "__main__":
-    X, y = make_regression(n_samples = 10, n_features = 1, noise = 0.9)
-    gd = GradientDescentRegressor()
-    gd.fit(X, y)
-    print(gd.regress([[2], [4], [1]]))
-    sgd = SGDRegressor(max_iter = 15000, alpha = 0.01)
-    sgd.fit(X, y)
-    print(sgd.predict([[2], [4], [1]]))
-    lin = LinearRegression()
-    lin.fit(X, y)
-    print(lin.predict([[2], [4], [1]]))
+# np.array([
+#     [1, 3, 1],
+#     [2, 3, 1],
+#     [3, 1, 2],
+#     [3, 1, 2],
+#     [2, 3, 3],
+# ])
+
+if __name__ == '__main__':
+    dataset = training_data = np.array([
+        ['Green', 3, 'Apple'],
+        ['Yellow', 3, 'Apple'],
+        ['Red', 1, 'Grape'],
+        ['Red', 1, 'Grape'],
+        ['Yellow', 3, 'Lemon'],
+    ], dtype = object)
+
+    print(dataset.shape)
+    cart = CARTClassifier()
+    cart.fit(dataset[:, 0 : 2], dataset[:, -1])
+    # print(cart.classify(np.array([['Green', 3], ['Yellow', 4], ['Red', 2], ['Yellow', 3]], dtype = object)))
+    print_tree(cart.root)

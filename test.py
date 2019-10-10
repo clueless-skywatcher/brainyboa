@@ -1,25 +1,16 @@
 from brainyboa.ensembling import CARTClassifier, print_tree
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 import numpy as np
 
-# np.array([
-#     [1, 3, 1],
-#     [2, 3, 1],
-#     [3, 1, 2],
-#     [3, 1, 2],
-#     [2, 3, 3],
-# ])
-
 if __name__ == '__main__':
-    dataset = training_data = np.array([
-        ['Green', 3, 'Apple'],
-        ['Yellow', 3, 'Apple'],
-        ['Red', 1, 'Grape'],
-        ['Red', 1, 'Grape'],
-        ['Yellow', 3, 'Lemon'],
-    ], dtype = object)
-
-    print(dataset.shape)
     cart = CARTClassifier()
-    cart.fit(dataset[:, 0 : 2], dataset[:, -1])
-    # print(cart.classify(np.array([['Green', 3], ['Yellow', 4], ['Red', 2], ['Yellow', 3]], dtype = object)))
-    print_tree(cart.root)
+    dec = DecisionTreeClassifier()
+    iris = load_iris()
+    x_train, x_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size = 0.2)
+    cart.fit(x_train, y_train)
+    dec.fit(x_train, y_train)
+    print(accuracy_score(dec.predict(x_test), y_test))
+    print(accuracy_score(cart.classify(x_test), y_test))

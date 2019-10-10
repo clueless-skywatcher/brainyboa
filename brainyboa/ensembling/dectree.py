@@ -104,8 +104,11 @@ class CARTClassifier:
         preds = []
         for row in x:
             pred = self._classify(row, self.root)
-            preds.append(max(pred.items(), key = operator.itemgetter(1))[0])
-        return preds
+            key = max(pred.items(), key = operator.itemgetter(1))[0]
+            if isinstance(key, float):
+                key = int(key)
+            preds.append(key)
+        return np.array(preds)
 
 def print_tree(node, spacing=""):
     """World's most elegant tree printing function."""

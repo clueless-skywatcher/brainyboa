@@ -1,6 +1,6 @@
 import numpy as np
-from ..utils import BaseFunction
-from ..metrics import *
+from brainyboa.utils import BaseFunction
+from brainyboa.metrics import squared_loss, squared_loss_derivative
 
 class GradientDescentRegressor:
     def __init__(self, loss = 'squared_loss', l_rate = 0.01, iters = 15000, tolerance = 0.0001):
@@ -17,7 +17,7 @@ class GradientDescentRegressor:
         self.theta = np.zeros((1, feature_size + 1))
 
         for i in range(self.iters):
-            gradient = eval(self.loss + '_derivative')(x1, y, self.theta)
+            gradient = eval(self.loss + '_derivative')(x1, y.T, self.theta)
             self.theta -= self.l_rate * gradient
             cost = eval(self.loss)(x1, y, self.theta)
             if cost <= self.tolerance:

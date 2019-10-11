@@ -110,21 +110,5 @@ class CARTClassifier:
             preds.append(key)
         return np.array(preds)
 
-def print_tree(node, spacing=""):
-    """World's most elegant tree printing function."""
-
-    # Base case: we've reached a leaf
-    if isinstance(node, PredictionLeaf):
-        print (spacing + "Predict", node.predictions)
-        return
-
-    # Print the question at this node
-    print (f'{spacing} Is Feature {node.feature} >= {node.val}?')
-
-    # Call this function recursively on the true branch
-    print (spacing + '--> True:')
-    print_tree(node.true_child, spacing + "  ")
-
-    # Call this function recursively on the false branch
-    print (spacing + '--> False:')
-    print_tree(node.false_child, spacing + "  ")
+    def get_dec_tree(self):
+        

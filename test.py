@@ -1,7 +1,7 @@
 import numpy as np
 
 from sklearn.tree import DecisionTreeClassifier
-from brainyboa.ensembling import CARTClassifier
+from brainyboa.trees import CARTClassifier
 
 from sklearn.datasets import load_iris
 

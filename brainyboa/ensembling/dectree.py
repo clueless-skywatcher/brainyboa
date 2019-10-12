@@ -72,7 +72,7 @@ class CARTClassifier:
                 if len(true_rows) < self.min_sample_split or len(false_rows) < self.min_sample_split:
                     continue
                 gain = self._info_gain(true_rows, false_rows, curr_entropy)
-                if gain >= best_gain:
+                if gain > best_gain:
                     best_gain, best_feature, best_val = gain, feature, val
 
         return best_gain, best_feature, best_val
@@ -115,5 +115,3 @@ class CARTClassifier:
                 key = int(key)
             preds.append(key)
         return np.array(preds)
-
-    

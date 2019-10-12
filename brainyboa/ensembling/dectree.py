@@ -5,7 +5,11 @@ import numpy as np
 class DecisionNode:
     def __init__(self, feature, val, true_child = None, false_child = None):
         self.feature = feature
-        self.val = val
+        if isinstance(val, float):
+            self.val = int(val)
+        else:
+            self.val = val
+
         self.true_child = true_child
         self.false_child = false_child
 
@@ -15,6 +19,8 @@ class PredictionLeaf:
         counts = {}
         for row in data:
             label = row[-1]
+            if isinstance(label, float):
+                label = int(label)
             counts[label] = counts.get(label, 0) + 1
         self.predictions = counts
 
@@ -110,5 +116,4 @@ class CARTClassifier:
             preds.append(key)
         return np.array(preds)
 
-    def get_dec_tree(self):
-        
+    

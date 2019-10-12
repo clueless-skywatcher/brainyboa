@@ -1,6 +1,16 @@
 import numpy as np
 
+__all__ = [
+    'shannon_entropy',
+    'gini_score'
+]
+
 def shannon_entropy(array):
+    '''
+    Calculates the Shannon Entropy of a given 1D array
+
+    :param array:
+    '''
     array = np.array(array)
     counts = {}
     for x in array:

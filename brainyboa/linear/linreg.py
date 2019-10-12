@@ -2,6 +2,11 @@ from brainyboa.metrics import mean_square_error, squared_loss, squared_loss_deri
 import numpy as np
 from brainyboa.linear.exc import RegressionError
 
+__all__ = [
+    'LinearRegressor',
+    'RidgeRegressor'
+]
+
 class LinearRegressor:
     def __init__(self, loss_function = 'mean_square_error'):
         self.loss_function = eval(loss_function)
@@ -29,7 +34,7 @@ class LinearRegressor:
         data_size = mat_x.shape[0]
         mat_x = np.c_[np.ones((data_size, 1)), mat_x]
         pred = mat_x.dot(self.ms)
-        return pred
+        return np.array(pred).flatten()
 
 class RidgeRegressor:
     def __init__(self, alpha = 1):
@@ -58,4 +63,4 @@ class RidgeRegressor:
         data_size = mat_x.shape[0]
         mat_x = np.c_[np.ones((data_size, 1)), mat_x]
         pred = mat_x.dot(self.ms)
-        return pred
+        return np.array(pred).flatten()

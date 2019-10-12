@@ -2,6 +2,10 @@ from ..metrics import shannon_entropy, gini_score
 import operator
 import numpy as np
 
+__all__ = [
+    'CARTClassifier'
+]
+
 class DecisionNode:
     def __init__(self, feature, val, true_child = None, false_child = None):
         self.feature = feature
@@ -37,7 +41,7 @@ class CARTClassifier:
         self.X = X
         self.y = y
         self.data = np.column_stack((X, y))
-        self._build_tree(self.data)
+        self.root = self._build_tree(self.data)
         return self
 
     def _split(self, data, feature, value):
@@ -63,7 +67,7 @@ class CARTClassifier:
         best_gain = 0.0
         best_feature = 0
         best_val = None
-        curr_entropy = self.metric(data[:, -1])
+        curr_entropy = 1
         columns = data.shape[1] - 1
         for feature in range(columns):
             vals = set(row[feature] for row in data)
@@ -88,14 +92,14 @@ class CARTClassifier:
         true_child = self._build_tree(true)
         false_child = self._build_tree(false)
 
-        self.root = DecisionNode(best_feature, best_val, true_child, false_child)
-        return self.root
+        root = DecisionNode(best_feature, best_val, true_child, false_child)
+        return root
 
     def _classify(self, x, node):
         if isinstance(node, PredictionLeaf):
             return node.predictions
 
-        if isinstance(x[node.feature], int) or isinstance(x[node.feature], float):
+        elif isinstance(x[node.feature], int) or isinstance(x[node.feature], float):
             if x[node.feature] >= node.val:
                 return self._classify(x, node.true_child)
             else:

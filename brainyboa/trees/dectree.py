@@ -1,9 +1,11 @@
 from ..metrics import shannon_entropy, gini_score
 import operator
 import numpy as np
+from brainyboa.base import *
 
 __all__ = [
-    'CARTClassifier'
+    'CARTClassifier',
+    'CARTRegressor'
 ]
 
 class DecisionNode:
@@ -28,7 +30,12 @@ class PredictionLeaf:
             counts[label] = counts.get(label, 0) + 1
         self.predictions = counts
 
-class CARTClassifier:
+class RegressionLeaf:
+    def __init__(self, rows):
+        self.rows = np.array(rows)
+        self.avg = np.mean(self.rows[:, -1])
+
+class CARTClassifier(BaseClassifier):
     '''
     A decision tree classifier using CART Algorithm
     '''
@@ -36,6 +43,7 @@ class CARTClassifier:
         self.root = None
         self.metric = eval(metric)
         self.min_sample_split = min_sample_split
+        super().__init__()
 
     def fit(self, X, y):
         self.X = X
@@ -119,3 +127,82 @@ class CARTClassifier:
                 key = int(key)
             preds.append(key)
         return np.array(preds)
+
+class RegressionTree:
+    def __init__(self, feature, val, true_child = None, false_child = None):
+        self.feature = feature
+        self.true_child = true_child
+        self.false_child = false_child
+        self.val = val
+
+
+class CARTRegressor(BaseRegressor):
+    def __init__(self, min_sample_split = 6, tolerance = 0.5):
+        self.fitted = False
+        self.root = None
+        self.min_sample_split = min_sample_split
+        self.tolerance = tolerance
+
+    def _split(self, data, feature, value):
+        true_rows = np.array(data[np.nonzero(data[:, feature] > value)[0], :])
+        false_rows = np.array(data[np.nonzero(data[:, feature] <= value)[0], :])
+        return true_rows, false_rows
+
+    def fit(self, X, y):
+        self.data = np.column_stack((X, y))
+        self.root = self._build_tree(self.data)
+        return self
+
+    def _build_tree(self, data):
+        feat, val = self._best_split_condition(data)
+        if feat == None:
+            return val
+
+        tree = RegressionTree(feat, val)
+        true_rows, false_rows = self._split(data, feat, val)
+        tree.true_child = self._build_tree(true_rows)
+        tree.false_child = self._build_tree(false_rows)
+
+        return tree
+
+    def _get_error(self, dataset):
+        return np.var(dataset[:, -1]) * np.shape(dataset)[0]
+
+    def _best_split_condition(self, data):
+        if len(np.unique(data[:, -1])) == 1:
+            return None, np.mean(data[:, -1])
+        rows, cols = np.shape(data)
+        err = self._get_error(data)
+        min_err, best_feature, best_val = np.inf, 0, 0
+        for feature in range(cols - 1):
+            for val in set(data[:, feature]):
+                true_rows, false_rows = self._split(data, feature, val)
+                if len(true_rows) < self.min_sample_split or len(false_rows) < self.min_sample_split:
+                    continue
+                new_err = self._get_error(true_rows) + self._get_error(false_rows)
+                if new_err < min_err:
+                    best_feature = feature
+                    best_val = val
+                    min_err = new_err
+        if (err - min_err) < self.tolerance:
+            return None, np.mean(data[:, -1])
+        true_rows, false_rows = self._split(data, best_feature, best_val)
+        if len(true_rows) < self.min_sample_split or len(false_rows) < self.min_sample_split:
+            return None, np.mean(data[:, -1])
+        return best_feature, best_val
+
+    def _regress(self, x, node):
+        if not isinstance(node, RegressionTree):
+            return node
+        if x[node.feature] >= node.val:
+            return self._regress(x, node.true_child)
+        else:
+            return self._regress(x, node.false_child)
+
+    def regress(self, X):
+        X = np.array(X)
+        preds = []
+        for x in X:
+            pred = self._regress(x, self.root)
+            preds.append(pred)
+        return preds

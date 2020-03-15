@@ -38,6 +38,15 @@ class RegressionLeaf:
 class CARTClassifier(BaseClassifier):
     '''
     A decision tree classifier using CART Algorithm
+
+    Parameters:
+    
+    :metric => Define the metric for the algorithm. By default it is set
+    to 'gini_score'
+
+    :min_sample_split => Define the minimum number of samples for each split 
+    node. Default is 2.
+
     '''
     def __init__(self, metric = 'gini_score', min_sample_split = 2):
         self.root = None
